@@ -55,7 +55,7 @@ func main() {
 	for i := 0; i < len(timetable); i++ {
 		hour := timetable[i]
 		oclock, _ := strconv.Atoi(hour.Hour)
-		if oclock == now.Hour() {
+		if oclock == now.Hour() || oclock+24 == now.Hour() {
 			currentHour = hour
 			nextHour = timetable[i+1]
 			break
