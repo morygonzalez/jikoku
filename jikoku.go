@@ -13,7 +13,6 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/djherbis/times"
-	"github.com/k0kubun/pp"
 )
 
 type Hour struct {
@@ -48,7 +47,7 @@ func printCommingTrains(trains []Train, filter string) {
 				if train.Destination != "" {
 					str = str + " " + train.Destination
 				}
-				pp.Println(str)
+				fmt.Println(str)
 			}
 		}
 	}
@@ -59,7 +58,7 @@ func getPath(targetUrl string) string {
 	if err != nil {
 		panic(err)
 	}
-	return fmt.Sprintf("/tmp/%s%s%s.html", u.Host, strings.Replace(u.Path, "/", "-", -1), u.RawQuery)
+	return fmt.Sprintf("/tmp/%s%s%s.html", u.Host, strings.Replace(u.Path, "/", "-", -1), url.QueryEscape(u.RawQuery))
 }
 
 func getPage(targetUrl string) bool {
@@ -77,7 +76,12 @@ func getPage(targetUrl string) bool {
 	mtime := t.ModTime()
 	anHourAgo := time.Now().Add(-1 * time.Hour)
 
-	if mtime.After(anHourAgo) {
+	filestat, err := file.Stat()
+	if err != nil {
+		panic(err)
+	}
+
+	if mtime.After(anHourAgo) && filestat.Size() > 0 {
 		return true
 	}
 
